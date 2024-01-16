@@ -1,0 +1,20 @@
+version: '3'
+services:
+  nginx:
+    build: ./webapp
+    ports:
+      - "7000:80"
+    volumes:
+      - myapp: /var/log/nginx
+
+  supervisor:
+    build: ./supervisor
+    depends_on:
+      - nginx
+    command: /bin/bash -c "while true; do cat /servlog/access.log | wc -l; slee>
+    volumes:
+      - myapp: /serverlog/
+
+  client:
+    image: radial/busyboxplus:curl
+    command: curl http://nginx:80
