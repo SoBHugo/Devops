@@ -1,0 +1,22 @@
+Version: '3'
+
+services:
+  reverse-proxy:
+    # Image officielle Docker de Traefik v2
+    image: traefik:v2.10
+    # Activer l'interface web de Traefik et utiliser le provider Docker
+    command: --api.insecure=true --providers.docker
+    ports:
+      # Mapping du port HTTP du reverse proxu
+      - "80:80"
+      # Mapping du port de l'interface web de Traefik (activée par --api.insecu>
+      - "8080:8080"
+    volumes:
+      # On monte le socket Docker pour que Traefik écounte les événements Docker
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  whoami:
+    # Un container qui expose une API affichant son adresse IP
+    image: traefik/whoami
+    labels:
+      - "traefik.http.routers.whoami.rule=Host(`whoami.docker.localhost`)"
